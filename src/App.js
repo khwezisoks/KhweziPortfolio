@@ -2,77 +2,37 @@
 import React, { useEffect } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import '@fortawesome/fontawesome-free/css/all.min.css'; // Add this line
-import 'bootstrap/dist/js/bootstrap.bundle.min.js'; // Add this line
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 function App() {
-
-    
-      // Manual carousel control (fallback)
-  const setupCarouselControls = () => {
-    const carousel = document.getElementById('projectMiniCarousel');
-    if (!carousel) return;
-
-    const prevBtn = carousel.querySelector('.carousel-control-prev');
-    const nextBtn = carousel.querySelector('.carousel-control-next');
-    const items = carousel.querySelectorAll('.carousel-item');
-    const indicators = carousel.querySelectorAll('.carousel-indicators button');
-    
-    let currentIndex = 0;
-
-    const showSlide = (index) => {
-      if (index < 0) index = items.length - 1;
-      if (index >= items.length) index = 0;
-      
-      items.forEach((item, i) => {
-        item.classList.remove('active');
-        if (i === index) item.classList.add('active');
-      });
-      
-      indicators.forEach((indicator, i) => {
-        indicator.classList.remove('active');
-        if (i === index) indicator.classList.add('active');
-      });
-      
-      currentIndex = index;
-    };
-
-    if (prevBtn) {
-      prevBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        showSlide(currentIndex - 1);
-      });
-    }
-
-    if (nextBtn) {
-      nextBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        showSlide(currentIndex + 1);
-      });
-    }
-
-    indicators.forEach((indicator, index) => {
-      indicator.addEventListener('click', (e) => {
-        e.preventDefault();
-        showSlide(index);
-      });
-    });
-
-    // Auto advance every 5 seconds
-    setInterval(() => {
-      showSlide(currentIndex + 1);
-    }, 5000);
+  // Define all images at the top of the component
+  const images = {
+    dashboard: require('./assets/videos/Screenshot (806).png'),
+    appointment: require('./assets/videos/Screenshot (807).png'),
+    doctors: require('./assets/videos/Screenshot (808).png'),
+    features: require('./assets/videos/Screenshot (809).png'),
+    interface: require('./assets/videos/Screenshot (810).png'),
+    adminPanel: require('./assets/videos/Screenshot (811).png'),
+    reports: require('./assets/videos/Screenshot (812).png'),
+    analytics: require('./assets/videos/Screenshot (813).png'),
+    settings: require('./assets/videos/Screenshot (814).png'),
+    mobileView: require('./assets/videos/Screenshot (815).png'),
+    dashboard2: require('./assets/videos/Screenshot (816).png'),
+    finalView: require('./assets/videos/Screenshot (817).png'),
+    profile: require('./assets/videos/me2.jpeg'),
+    demoVideo: require('./assets/videos/WhatsApp Video 2025-11-25 at 02.13.24.mp4')
   };
 
-  setupCarouselControls();
   useEffect(() => {
     // Navbar scroll effect
     const handleScroll = () => {
       const navbar = document.querySelector('.navbar');
+      if (!navbar) return;
       if (window.scrollY > 50) {
-        navbar?.classList.add('scrolled');
+        navbar.classList.add('scrolled');
       } else {
-        navbar?.classList.remove('scrolled');
+        navbar.classList.remove('scrolled');
       }
     };
 
@@ -88,123 +48,72 @@ function App() {
       });
     };
 
-    // Smooth scrolling for navigation links
-    const handleAnchorClick = (e) => {
-      const anchor = e.target.closest('a[href^="#"]');
-      if (anchor) {
-        e.preventDefault();
-        const targetId = anchor.getAttribute('href');
-        if (targetId === '#') return;
-        
-        const targetElement = document.querySelector(targetId);
-        if (targetElement) {
-          document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.remove('active');
-          });
-          anchor.classList.add('active');
-          
-          window.scrollTo({
-            top: targetElement.offsetTop - 80,
-            behavior: 'smooth'
-          });
+    // Initialize Bootstrap carousels
+    const initCarousels = () => {
+      try {
+        if (typeof window.bootstrap !== 'undefined') {
+          const carouselElement = document.getElementById('projectMiniCarousel');
+          if (carouselElement) {
+            new window.bootstrap.Carousel(carouselElement, {
+              interval: 5000,
+              wrap: true
+            });
+          }
         }
+      } catch (error) {
+        console.log('Carousel initialization error:', error);
       }
     };
 
-    // Create floating code elements
-    const createCodeElements = () => {
-      const container = document.querySelector('.animated-bg');
-      if (!container) return;
-      
-      const codeSnippets = [
-        'function optimize() { return data; }',
-        'class Developer { code() {} }',
-        'const api = new RestAPI();',
-        'data.analyze().visualize();',
-        'db.query().optimize();',
-        'app.build().deploy();',
-        'const solution = new Solution();',
-        'async function process() {}'
-      ];
-      
-      for (let i = 0; i < 10; i++) {
-        const codeEl = document.createElement('div');
-        codeEl.className = 'code-element';
-        codeEl.textContent = codeSnippets[Math.floor(Math.random() * codeSnippets.length)];
-        
-        const left = Math.random() * 100;
-        const top = Math.random() * 100;
-        const delay = Math.random() * 20;
-        const duration = 20 + Math.random() * 20;
-        
-        codeEl.style.left = `${left}%`;
-        codeEl.style.top = `${top}%`;
-        codeEl.style.animationDelay = `${delay}s`;
-        codeEl.style.animationDuration = `${duration}s`;
-        
-        container.appendChild(codeEl);
+    // Load Leaflet map
+    const loadLeaflet = () => {
+      try {
+        if (!document.querySelector('link[href*="leaflet.css"]')) {
+          const link = document.createElement('link');
+          link.rel = 'stylesheet';
+          link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+          link.crossOrigin = 'anonymous';
+          document.head.appendChild(link);
+        }
+
+        if (!window.L) {
+          const script = document.createElement('script');
+          script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+          script.crossOrigin = 'anonymous';
+          script.onload = () => {
+            setTimeout(() => {
+              if (window.L && document.getElementById('mountAyliffMap')) {
+                initMap();
+              }
+            }, 100);
+          };
+          document.body.appendChild(script);
+        } else {
+          initMap();
+        }
+      } catch (error) {
+        console.log('Leaflet loading error:', error);
       }
     };
 
-    // Initialize Leaflet map
     const initMap = () => {
-      if (window.L) {
-        const map = L.map('mountAyliffMap').setView([-30.813345, 29.381691], 13);
+      try {
+        if (!window.L) return;
         
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        const mapElement = document.getElementById('mountAyliffMap');
+        if (!mapElement) return;
+
+        const map = window.L.map('mountAyliffMap').setView([-30.813345, 29.381691], 13);
+        
+        window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '© OpenStreetMap contributors'
         }).addTo(map);
         
-        const customIcon = L.divIcon({
-          html: '<i class="fas fa-map-pin" style="color: #0066CC; font-size: 32px;"></i>',
-          iconSize: [32, 32],
-          iconAnchor: [16, 32],
-          popupAnchor: [0, -32]
-        });
-        
-        const marker = L.marker([-30.813345, 29.381691], { icon: customIcon }).addTo(map);
-        
-        marker.bindPopup(`
-          <strong>Mount Ayliff, Eastern Cape</strong><br>
-          <small>My Hometown</small><br>
-          <hr style="margin: 5px 0;">
-          <i class="fas fa-info-circle"></i> Alfred Nzo District<br>
-          <i class="fas fa-code"></i> Remote Work Ready
-        `).openPopup();
-        
-        L.circle([-30.813345, 29.381691], {
-          color: '#0066CC',
-          fillColor: 'rgba(0, 102, 204, 0.1)',
-          fillOpacity: 0.3,
-          radius: 2000
-        }).addTo(map);
-      }
-    };
-
-    // Load Leaflet and initialize
-    const loadLeaflet = () => {
-      if (!document.querySelector('link[href*="leaflet.css"]')) {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
-        document.head.appendChild(link);
-      }
-
-      if (!window.L) {
-        const script = document.createElement('script');
-        script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-        script.onload = initMap;
-        document.body.appendChild(script);
-      } else {
-        initMap();
-      }
-    };
-
-    // Set current year in footer
-    const setCurrentYear = () => {
-      const yearElement = document.querySelector('.footer-content small');
-      if (yearElement) {
-        yearElement.innerHTML = `© ${new Date().getFullYear()} Khwezi Sokanyile. All rights reserved.`;
+        window.L.marker([-30.813345, 29.381691]).addTo(map)
+          .bindPopup('Mount Ayliff, Eastern Cape')
+          .openPopup();
+      } catch (error) {
+        console.log('Map initialization error:', error);
       }
     };
 
@@ -214,19 +123,16 @@ function App() {
       checkFadeIn();
     });
     
-    document.addEventListener('click', handleAnchorClick);
-    
     // Initial calls
-    createCodeElements();
+    handleScroll();
     checkFadeIn();
-    setCurrentYear();
+    initCarousels();
     loadLeaflet();
 
     // Cleanup
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('scroll', checkFadeIn);
-      document.removeEventListener('click', handleAnchorClick);
     };
   }, []);
 
@@ -237,8 +143,6 @@ function App() {
         <div className="bg-grid"></div>
       </div>
 
-      {/* Floating Code Elements - These will be generated by JavaScript */}
-      
       {/* Main Content */}
       <main>
         {/* Hero Section */}
@@ -273,7 +177,7 @@ function App() {
               <div className="col-lg-6 text-center fade-in">
                 <div className="profile-container">
                   <div className="profile-frame">
-                    <img src="/videos/me2.jpeg" className="profile-img" alt="Khwezi Sokanyile" />
+                    <img src={images.profile} className="profile-img" alt="Khwezi Sokanyile" />
                   </div>
                   <div className="mt-4">
                     <div className="d-flex flex-wrap justify-content-center gap-2">
@@ -480,94 +384,86 @@ function App() {
             <h2 className="section-title fade-in">Featured Projects</h2>
             <p className="section-subtitle fade-in">Real-world applications demonstrating technical capabilities</p>
             
-            {/* Projects Section - Two Cards Side by Side */}
-<div className="row g-4">
-  {/* HealthOps Project - First Column */}
-  <div className="col-lg-6 fade-in">
-    <div className="project-card">
-      <div className="project-content">
-        <h3 className="mb-3" style={{color: 'var(--secondary-blue)'}}>HealthOps Hospital Management System</h3>
-        <p className="text-muted mb-4">
-          Comprehensive healthcare management platform featuring patient appointment booking, doctor panels,
-          AI-powered assistant (Bonfire), real-time monitoring, and efficient healthcare operations tracking.
-        </p>
-        <div className="mb-4">
-          <span className="badge bg-primary me-2">ASP.NET MVC</span>
-          <span className="badge bg-primary me-2">SQL Server</span>
-          <span className="badge bg-primary me-2">Entity Framework</span>
-          <span className="badge bg-primary me-2">AI Integration</span>
-          <span className="badge bg-primary">Healthcare Tech</span>
-        </div>
-        <ul className="list-unstyled">
-          <li><i className="fas fa-check text-primary me-2"></i> AI-powered assistant (Bonfire) for patient support</li>
-          <li><i className="fas fa-check text-primary me-2"></i> Doctor panel & staff management system</li>
-          <li><i className="fas fa-check text-primary me-2"></i> Secure appointment booking & scheduling</li>
-          <li><i className="fas fa-check text-primary me-2"></i> Medical records & patient data management</li>
-          <li><i className="fas fa-check text-primary me-2"></i> Real-time healthcare operations tracking</li>
-        </ul>
-        
-        {/* Add Live Demo Button for HealthOps (optional) */}
-      
-      </div>
-    </div>
-  </div>
+            <div className="row g-4">
+              {/* HealthOps Project */}
+              <div className="col-lg-6 fade-in">
+                <div className="project-card">
+                  <div className="project-content">
+                    <h3 className="mb-3" style={{color: 'var(--secondary-blue)'}}>HealthOps Hospital Management System</h3>
+                    <p className="text-muted mb-4">
+                      Comprehensive healthcare management platform featuring patient appointment booking, doctor panels,
+                      AI-powered assistant (Bonfire), real-time monitoring, and efficient healthcare operations tracking.
+                    </p>
+                    <div className="mb-4">
+                      <span className="badge bg-primary me-2">ASP.NET MVC</span>
+                      <span className="badge bg-primary me-2">SQL Server</span>
+                      <span className="badge bg-primary me-2">Entity Framework</span>
+                      <span className="badge bg-primary me-2">AI Integration</span>
+                      <span className="badge bg-primary">Healthcare Tech</span>
+                    </div>
+                    <ul className="list-unstyled">
+                      <li><i className="fas fa-check text-primary me-2"></i> AI-powered assistant (Bonfire) for patient support</li>
+                      <li><i className="fas fa-check text-primary me-2"></i> Doctor panel & staff management system</li>
+                      <li><i className="fas fa-check text-primary me-2"></i> Secure appointment booking & scheduling</li>
+                      <li><i className="fas fa-check text-primary me-2"></i> Medical records & patient data management</li>
+                      <li><i className="fas fa-check text-primary me-2"></i> Real-time healthcare operations tracking</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
 
-  {/* React Todo App - Second Column (INSIDE THE SAME ROW) */}
-  <div className="col-lg-6 fade-in">
-    <div className="project-card">
-      <div className="project-content">
-        <h3 className="mb-3" style={{color: 'var(--secondary-blue)'}}>React To-do Application</h3>
-        <p className="text-muted mb-4">
-          A modern, feature-rich todo application built with React. Features include task management, 
-          categories, due dates, and a clean, intuitive user interface for efficient productivity tracking.
-        </p>
-        <div className="mb-4">
-          <span className="badge bg-primary me-2">React</span>
-          <span className="badge bg-primary me-2">JavaScript</span>
-          <span className="badge bg-primary me-2">CSS3</span>
-          <span className="badge bg-primary me-2">LocalStorage</span>
-          <span className="badge bg-primary">Responsive</span>
-        </div>
-        <ul className="list-unstyled">
-          <li><i className="fas fa-check text-primary me-2"></i> Create, edit, and delete tasks</li>
-          <li><i className="fas fa-check text-primary me-2"></i> Mark tasks as complete/incomplete</li>
-          <li><i className="fas fa-check text-primary me-2"></i> Filter tasks by status (All/Active/Completed)</li>
-          <li><i className="fas fa-check text-primary me-2"></i> Persistent storage with browser LocalStorage</li>
-          <li><i className="fas fa-check text-primary me-2"></i> Clean and responsive user interface</li>
-        </ul>
-        
-        {/* Live Demo Button for Todo App */}
-        <div className="mt-4">
-          <a href="https://github.com/khwezisoks/react-todo" 
-             target="_blank" 
-             rel="noopener noreferrer" 
-             className="btn btn-primary me-2" 
-             style={{borderRadius: '50px', padding: '0.5rem 1.5rem'}}>
-            <i className="fab fa-github me-2"></i>View Code
-          </a>
-          <a href="https://react-todo-ph9zo86qc-khwezisoks-projects.vercel.app" 
-             target="_blank" 
-             rel="noopener noreferrer" 
-             className="btn btn-outline-primary" 
-             style={{borderRadius: '50px', padding: '0.5rem 1.5rem'}}>
-            <i className="fas fa-external-link-alt me-2"></i>Live Demo
-          </a>
-        </div>
-      </div>
-    </div>
-  </div>
-</div> {/* This closes the row properly */}
-
-
-            <br /><br />
+              {/* React Todo App */}
+              <div className="col-lg-6 fade-in">
+                <div className="project-card">
+                  <div className="project-content">
+                    <h3 className="mb-3" style={{color: 'var(--secondary-blue)'}}>React Todo Application</h3>
+                    <p className="text-muted mb-4">
+                      A modern, feature-rich todo application built with React. Features include task management, 
+                      categories, due dates, and a clean, intuitive user interface for efficient productivity tracking.
+                    </p>
+                    <div className="mb-4">
+                      <span className="badge bg-primary me-2">React</span>
+                      <span className="badge bg-primary me-2">JavaScript</span>
+                      <span className="badge bg-primary me-2">CSS3</span>
+                      <span className="badge bg-primary me-2">LocalStorage</span>
+                      <span className="badge bg-primary">Responsive</span>
+                    </div>
+                    <ul className="list-unstyled">
+                      <li><i className="fas fa-check text-primary me-2"></i> Create, edit, and delete tasks</li>
+                      <li><i className="fas fa-check text-primary me-2"></i> Mark tasks as complete/incomplete</li>
+                      <li><i className="fas fa-check text-primary me-2"></i> Filter tasks by status (All/Active/Completed)</li>
+                      <li><i className="fas fa-check text-primary me-2"></i> Persistent storage with browser LocalStorage</li>
+                      <li><i className="fas fa-check text-primary me-2"></i> Clean and responsive user interface</li>
+                    </ul>
+                    
+                    <div className="mt-4">
+                      <a href="https://github.com/khwezisoks/react-todo" 
+                         target="_blank" 
+                         rel="noopener noreferrer" 
+                         className="btn btn-primary me-2" 
+                         style={{borderRadius: '50px', padding: '0.5rem 1.5rem'}}>
+                        <i className="fab fa-github me-2"></i>View Code
+                      </a>
+                      <a href="https://react-todo-ph9zo86qc-khwezisoks-projects.vercel.app" 
+                         target="_blank" 
+                         rel="noopener noreferrer" 
+                         className="btn btn-outline-primary" 
+                         style={{borderRadius: '50px', padding: '0.5rem 1.5rem'}}>
+                        <i className="fas fa-external-link-alt me-2"></i>Live Demo
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
 
             {/* Project Carousel */}
-            <div className="project-mini-carousel position-relative" style={{height: '600px', maxWidth: '1000px', margin: '0 auto'}}>
+            <div className="project-mini-carousel position-relative mt-5" style={{height: '600px', maxWidth: '1000px', margin: '0 auto'}}>
               <div id="projectMiniCarousel" className="carousel slide h-100" data-bs-ride="carousel">
                 <div className="carousel-inner h-100">
                   {/* Slide 1 */}
                   <div className="carousel-item active h-100">
-                    <img src="/videos/screenshot (806).png"
+                    <img src={images.dashboard}
                          className="d-block w-100 h-100 object-fit-contain"
                          alt="Dashboard View"
                          style={{backgroundColor: '#f5f5f5'}} />
@@ -578,7 +474,7 @@ function App() {
 
                   {/* Slide 2 */}
                   <div className="carousel-item h-100">
-                    <img src="/videos/screenshot (807).png"
+                    <img src={images.appointment}
                          className="d-block w-100 h-100 object-fit-contain"
                          alt="Appointment System"
                          style={{backgroundColor: '#f5f5f5'}} />
@@ -590,7 +486,7 @@ function App() {
                   {/* Slide 3 - Video */}
                   <div className="carousel-item h-100">
                     <video className="d-block w-100 h-100 object-fit-contain" controls style={{backgroundColor: '#f5f5f5'}}>
-                      <source src="/videos/WhatsApp Video 2025-11-25 at 02.13.24.mp4" type="video/mp4" />
+                      <source src={images.demoVideo} type="video/mp4" />
                       Your browser does not support the video tag.
                     </video>
                     <div className="carousel-caption mini-caption">
@@ -600,7 +496,7 @@ function App() {
 
                   {/* Slide 4 */}
                   <div className="carousel-item h-100">
-                    <img src="/videos/screenshot (808).png"
+                    <img src={images.doctors}
                          className="d-block w-100 h-100 object-fit-contain"
                          alt="Doctors Management"
                          style={{backgroundColor: '#f5f5f5'}} />
@@ -611,7 +507,7 @@ function App() {
 
                   {/* Slide 5 */}
                   <div className="carousel-item h-100">
-                    <img src="/videos/screenshot (809).png"
+                    <img src={images.features}
                          className="d-block w-100 h-100 object-fit-contain"
                          alt="Features"
                          style={{backgroundColor: '#f5f5f5'}} />
@@ -622,9 +518,9 @@ function App() {
 
                   {/* Slide 6 */}
                   <div className="carousel-item h-100">
-                    <img src="/videos/screenshot (810).png"
+                    <img src={images.interface}
                          className="d-block w-100 h-100 object-fit-contain"
-                         alt="Interface"
+                         alt="User Interface"
                          style={{backgroundColor: '#f5f5f5'}} />
                     <div className="carousel-caption mini-caption">
                       <small>User Interface</small>
@@ -633,7 +529,7 @@ function App() {
 
                   {/* Slide 7 */}
                   <div className="carousel-item h-100">
-                    <img src="/videos/screenshot (811).png"
+                    <img src={images.adminPanel}
                          className="d-block w-100 h-100 object-fit-contain"
                          alt="Admin Panel"
                          style={{backgroundColor: '#f5f5f5'}} />
@@ -644,7 +540,7 @@ function App() {
 
                   {/* Slide 8 */}
                   <div className="carousel-item h-100">
-                    <img src="/videos/screenshot (812).png"
+                    <img src={images.reports}
                          className="d-block w-100 h-100 object-fit-contain"
                          alt="Reports"
                          style={{backgroundColor: '#f5f5f5'}} />
@@ -655,7 +551,7 @@ function App() {
 
                   {/* Slide 9 */}
                   <div className="carousel-item h-100">
-                    <img src="/videos/screenshot (813).png"
+                    <img src={images.analytics}
                          className="d-block w-100 h-100 object-fit-contain"
                          alt="Analytics"
                          style={{backgroundColor: '#f5f5f5'}} />
@@ -666,7 +562,7 @@ function App() {
 
                   {/* Slide 10 */}
                   <div className="carousel-item h-100">
-                    <img src="/videos/screenshot (814).png"
+                    <img src={images.settings}
                          className="d-block w-100 h-100 object-fit-contain"
                          alt="Settings"
                          style={{backgroundColor: '#f5f5f5'}} />
@@ -677,7 +573,7 @@ function App() {
 
                   {/* Slide 11 */}
                   <div className="carousel-item h-100">
-                    <img src="/videos/screenshot (815).png"
+                    <img src={images.mobileView}
                          className="d-block w-100 h-100 object-fit-contain"
                          alt="Mobile View"
                          style={{backgroundColor: '#f5f5f5'}} />
@@ -688,9 +584,9 @@ function App() {
 
                   {/* Slide 12 */}
                   <div className="carousel-item h-100">
-                    <img src="/videos/screenshot (816).png"
+                    <img src={images.dashboard2}
                          className="d-block w-100 h-100 object-fit-contain"
-                         alt="Dashboard 2"
+                         alt="Dashboard Overview"
                          style={{backgroundColor: '#f5f5f5'}} />
                     <div className="carousel-caption mini-caption">
                       <small>Dashboard Overview</small>
@@ -699,7 +595,7 @@ function App() {
 
                   {/* Slide 13 */}
                   <div className="carousel-item h-100">
-                    <img src="/videos/screenshot (817).png"
+                    <img src={images.finalView}
                          className="d-block w-100 h-100 object-fit-contain"
                          alt="Final View"
                          style={{backgroundColor: '#f5f5f5'}} />
@@ -853,29 +749,31 @@ function App() {
         </section>
 
         {/* Map Section */}
-        <div className="col-lg-12 fade-in">
-          <div className="info-card">
-            <h3 className="mb-4" style={{color: 'var(--secondary-blue)', textAlign: 'center'}}>
-              <i className="fas fa-map-marked-alt me-2"></i>Location: Mount Ayliff, Eastern Cape
-            </h3>
+        <div className="container">
+          <div className="col-lg-12 fade-in">
+            <div className="info-card">
+              <h3 className="mb-4" style={{color: 'var(--secondary-blue)', textAlign: 'center'}}>
+                <i className="fas fa-map-marked-alt me-2"></i>Location: Mount Ayliff, Eastern Cape
+              </h3>
 
-            <div id="mountAyliffMap" style={{height: '400px', borderRadius: '15px', overflow: 'hidden'}}></div>
+              <div id="mountAyliffMap" style={{height: '400px', borderRadius: '15px', overflow: 'hidden'}}></div>
 
-            <div className="mt-3 p-3" style={{background: 'var(--light-blue)', borderRadius: '10px'}}>
-              <div className="row align-items-center">
-                <div className="col-md-8">
-                  <h5 style={{color: 'var(--primary-blue)'}}>📍 Mount Ayliff, Eastern Cape</h5>
-                  <p className="mb-0 text-muted">
-                    Situated in the picturesque Alfred Nzo District Municipality,
-                    known for its beautiful landscapes and strong community spirit.
-                    Ready to collaborate with teams worldwide through remote work capabilities.
-                  </p>
-                </div>
-                <div className="col-md-4 text-end">
-                  <a href="https://goo.gl/maps/YourMapLink" target="_blank" rel="noopener noreferrer"
-                     className="cta-button cta-button-secondary btn-sm">
-                    <i className="fas fa-external-link-alt me-2"></i>Open in Google Maps
-                  </a>
+              <div className="mt-3 p-3" style={{background: 'var(--light-blue)', borderRadius: '10px'}}>
+                <div className="row align-items-center">
+                  <div className="col-md-8">
+                    <h5 style={{color: 'var(--primary-blue)'}}>📍 Mount Ayliff, Eastern Cape</h5>
+                    <p className="mb-0 text-muted">
+                      Situated in the picturesque Alfred Nzo District Municipality,
+                      known for its beautiful landscapes and strong community spirit.
+                      Ready to collaborate with teams worldwide through remote work capabilities.
+                    </p>
+                  </div>
+                  <div className="col-md-4 text-end">
+                    <a href="https://goo.gl/maps/YourMapLink" target="_blank" rel="noopener noreferrer"
+                       className="cta-button cta-button-secondary btn-sm">
+                      <i className="fas fa-external-link-alt me-2"></i>Open in Google Maps
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>

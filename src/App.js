@@ -412,6 +412,52 @@ function App() {
                 </div>
               </div>
 
+{/* JobTack Project */}
+<div className="col-lg-6 fade-in">
+  <div className="project-card">
+    <div className="project-content">
+      <h3 className="mb-3" style={{color: 'var(--secondary-blue)'}}>JobTack Task Management App</h3>
+      <p className="text-muted mb-4">
+        A full-featured task management application similar to a Todo app, built with React and Bootstrap. 
+        Allows creating, editing, and managing tasks efficiently with categories, deadlines, and persistent storage.
+      </p>
+      <div className="mb-4">
+        <span className="badge bg-primary me-2">React</span>
+        <span className="badge bg-primary me-2">JavaScript</span>
+        <span className="badge bg-primary me-2">Bootstrap 5</span>
+        <span className="badge bg-primary me-2">LocalStorage</span>
+        <span className="badge bg-primary">Responsive</span>
+      </div>
+      <ul className="list-unstyled">
+        <li><i className="fas fa-check text-primary me-2"></i>Create, edit, and delete tasks</li>
+        <li><i className="fas fa-check text-primary me-2"></i>Mark tasks as complete/incomplete</li>
+        <li><i className="fas fa-check text-primary me-2"></i>Filter tasks by status (All/Active/Completed)</li>
+        <li><i className="fas fa-check text-primary me-2"></i>Persistent storage using LocalStorage</li>
+        <li><i className="fas fa-check text-primary me-2"></i>Responsive and clean UI</li>
+      </ul>
+      <div className="mt-4">
+        <a href="https://github.com/khwezisoks/jobtack" 
+           target="_blank" 
+           rel="noopener noreferrer" 
+           className="btn btn-primary me-2" 
+           style={{borderRadius: '50px', padding: '0.5rem 1.5rem'}}>
+          <i className="fab fa-github me-2"></i>View Code
+        </a>
+        <a href="https://job-track-fawn.vercel.app/" 
+           target="_blank" 
+           rel="noopener noreferrer" 
+           className="btn btn-outline-primary" 
+           style={{borderRadius: '50px', padding: '0.5rem 1.5rem'}}>
+          <i className="fas fa-external-link-alt me-2"></i>Live Demo
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
               {/* React Todo App */}
               <div className="col-lg-6 fade-in">
                 <div className="project-card">
